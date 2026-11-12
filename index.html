@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#A34718">
+  <meta name="description"
+    content="GameFi player registration — check your details, pick your games and send your entry.">
+  <title>GameFi — Player pass</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23E2532B' d='M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* Arcade pass: manila ticket stock on the carpet. 4 inks only. */
+    :root {
+      --page: #a34718;
+      --violet: #33302c;
+      /* charcoal ticket head */
+      --violet-deep: #201e1b;
+      --manila: #e6d5b8;
+      --manila-dark: #d6c19c;
+      --ink: #221a2e;
+      --ink-soft: #5a4b60;
+      --signal: #e2532b;
+      --signal-ink: #b23c1c;
+      /* text-safe on manila */
+      --gold: #d9a521;
+      --error: #a32b1d;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box
+    }
+
+    [hidden] {
+      display: none !important
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--page);
+      color: var(--ink);
+      font-family: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: clamp(20px, 5vw, 56px) 16px;
+    }
+
+    /* ---- ticket ---- */
+    .pass {
+      position: relative;
+      width: 100%;
+      max-width: 540px;
+      background: var(--manila);
+      border-radius: 3px;
+    }
+
+    .pass-top {
+      padding: 22px clamp(20px, 5vw, 32px) 18px;
+      background: var(--violet);
+      color: var(--manila);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 19px;
+      line-height: 1
+    }
+
+    .brand svg {
+      width: 15px;
+      height: 15px;
+      fill: var(--gold)
+    }
+
+    .brand span {
+      font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+      font-weight: 400;
+      letter-spacing: .04em;
+    }
+
+    .open {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: rgba(230, 213, 184, .78);
+    }
+
+    .open::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold)
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+      font-weight: 400;
+      font-size: clamp(31px, 7vw, 44px);
+      line-height: 1.04;
+      letter-spacing: .005em;
+      color: var(--manila);
+    }
+
+    .lede {
+      margin: 0;
+      max-width: 46ch;
+      font-size: 15px;
+      color: rgba(230, 213, 184, .7);
+    }
+
+    /* perforation between the pass and the form */
+    .perf {
+      position: relative;
+      height: 22px;
+      background: var(--manila);
+    }
+
+    .perf::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 50%;
+      border-top: 2px dashed rgba(34, 26, 46, .22);
+    }
+
+    .perf::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 16px;
+      transform: translateY(-8px);
+      background:
+        radial-gradient(circle at 0 50%, var(--page) 0 9px, transparent 9.5px),
+        radial-gradient(circle at 100% 50%, var(--page) 0 9px, transparent 9.5px);
+    }
+
+    /* ---- form ---- */
+    .pass-body {
+      padding: 6px clamp(20px, 5vw, 32px) clamp(22px, 5vw, 30px)
+    }
+
+    form {
+      display: grid;
+      gap: 20px
+    }
+
+    .field {
+      display: grid;
+      gap: 4px;
+      min-width: 0
+    }
+
+    .label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink)
+    }
+
+    .hint {
+      margin: 0;
+      font-size: 13px;
+      color: var(--ink-soft)
+    }
+
+    .field input {
+      width: 100%;
+      padding: 8px 2px;
+      border: 0;
+      border-bottom: 1.5px solid rgba(34, 26, 46, .28);
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px;
+    }
+
+    .field input::placeholder {
+      color: rgba(34, 26, 46, .38)
+    }
+
+    .field input:focus {
+      outline: 0;
+      border-bottom-color: var(--signal);
+      box-shadow: 0 1.5px 0 0 var(--signal);
+      background: rgba(226, 83, 43, .05);
+    }
+
+    .field:has(input:focus) .label {
+      color: var(--signal-ink)
+    }
+
+    .field input:user-invalid {
+      border-bottom-color: var(--error)
+    }
+
+    fieldset.field {
+      border: 0;
+      margin: 0;
+      padding: 0
+    }
+
+    legend.label {
+      padding: 0;
+      margin-bottom: 4px
+    }
+
+    .games {
+      display: grid;
+      margin-top: 8px
+    }
+
+    .game {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 2px;
+      border-bottom: 1px dashed rgba(34, 26, 46, .2);
+      cursor: pointer;
+    }
+
+    .game input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .game:has(input:focus-visible) {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px
+    }
+
+    .game:has(input:checked) {
+      background: rgba(226, 83, 43, .07)
+    }
+
+    .glyph {
+      font-size: 19px;
+      line-height: 1;
+      flex: none
+    }
+
+    .game-name {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--ink)
+    }
+
+    .game:has(input:checked) .game-name {
+      font-weight: 700
+    }
+
+    .box {
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 22px;
+      height: 22px;
+      margin-left: auto;
+      border: 1.5px solid rgba(34, 26, 46, .45);
+      border-radius: 2px;
+      transition: background .14s ease, border-color .14s ease;
+    }
+
+    .box svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--manila);
+      stroke-width: 3.6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+    }
+
+    .game:has(input:checked) .box {
+      background: var(--signal);
+      border-color: var(--signal)
+    }
+
+    .game:has(input:checked) .box svg {
+      opacity: 1;
+      animation: stamp .28s cubic-bezier(.3, 1.5, .5, 1) both
+    }
+
+    @keyframes stamp {
+      from {
+        transform: scale(1.9) rotate(-9deg);
+        opacity: 0
+      }
+
+      to {
+        transform: none;
+        opacity: 1
+      }
+    }
+
+    .error {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--error)
+    }
+
+    .error[hidden] {
+      display: none
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 4px;
+      padding: 17px 20px;
+      border: 0;
+      border-radius: 2px;
+      background: var(--violet-deep);
+      color: var(--manila);
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .01em;
+      cursor: pointer;
+      transition: background .16s ease, transform .16s ease;
+    }
+
+    button:hover {
+      background: var(--violet)
+    }
+
+    button:active {
+      transform: translateY(1px)
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--violet-deep);
+      outline-offset: 3px
+    }
+
+    button:disabled {
+      background: var(--ink-soft);
+      cursor: progress
+    }
+
+    .status {
+      min-height: 18px;
+      margin: 0;
+      font-size: 13px;
+      color: var(--ink-soft)
+    }
+
+    .fineprint {
+      margin: 20px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid rgba(34, 26, 46, .14);
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      max-width: 44ch;
+    }
+
+    /* ---- confirmation ---- */
+    .success {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      padding: 24px 0 14px;
+      animation: rise .45s ease both;
+    }
+
+    .success:focus {
+      outline: none
+    }
+
+    .stamp {
+      position: relative;
+      display: grid;
+      place-content: center;
+      gap: 1px;
+      width: 118px;
+      height: 118px;
+      margin-bottom: 26px;
+      border: 3px solid var(--signal);
+      border-radius: 50%;
+      color: var(--signal);
+      mix-blend-mode: multiply;
+      opacity: .88;
+      transform: rotate(-8deg);
+      animation: stamp-in .5s cubic-bezier(.2, 1.4, .4, 1) both;
+    }
+
+    .stamp::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1.5px dashed currentColor;
+      border-radius: 50%;
+      opacity: .55;
+    }
+
+    .stamp-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    .stamp-word {
+      font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+      font-size: 22px;
+      line-height: 1.05;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    @keyframes stamp-in {
+      from {
+        transform: rotate(-8deg) scale(1.7);
+        opacity: 0
+      }
+
+      to {
+        transform: rotate(-8deg) scale(1);
+        opacity: .88
+      }
+    }
+
+    .success h2 {
+      margin: 0 0 8px;
+      font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+      font-weight: 400;
+      font-size: clamp(25px, 5vw, 32px);
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .success p {
+      margin: 0;
+      max-width: 38ch;
+      font-size: 15px;
+      color: var(--ink-soft)
+    }
+
+    .success strong {
+      color: var(--signal-ink);
+      font-weight: 600
+    }
+
+    .fx {
+      position: fixed;
+      inset: 0;
+      z-index: 9;
+      pointer-events: none
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main>
+    <section class="pass">
+      <div class="pass-top">
+        <div class="head">
+          <div class="brand">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z" />
+            </svg>
+            <span>Gamefi</span>
+          </div>
+          <span class="open">Registration open</span>
+        </div>
+
+        <h1>Your player pass</h1>
+        <p class="lede">Check your details and choose the games you're joining. It goes straight to the organizer.</p>
+      </div>
+
+      <div class="perf" aria-hidden="true"></div>
+
+      <div class="pass-body">
+        <!-- Posts to the original Google Form, keeping the same entry IDs. -->
+        <form
+          action="https://docs.google.com/forms/d/e/1FAIpQLScL9coMdCJNdsARg29K1lUJQ2063DMJuLkR7_aYDmQoHYkCIg/formResponse"
+          method="post" novalidate>
+
+          <div class="field">
+            <label class="label" for="name">Full name</label>
+            <input id="name" name="entry.334547047" type="text" value="" autocomplete="name"
+              placeholder="Your full name" required>
+          </div>
+
+          <div class="field">
+            <label class="label" for="phone">Phone number</label>
+            <input id="phone" name="entry.1693223414" type="tel" value="" autocomplete="tel" inputmode="tel"
+              placeholder="07X XXX XXXX" pattern="[0-9+()\s-]{7,20}" title="Use digits, spaces, +, ( ) or -" required>
+          </div>
+
+          <div class="field">
+            <label class="label" for="username">Username</label>
+            <input id="username" name="entry.1771846566" type="text" value="" autocomplete="username"
+              autocapitalize="none" spellcheck="false" placeholder="Your in-game name" minlength="3" required>
+          </div>
+
+          <fieldset class="field">
+            <legend class="label">Games you're joining</legend>
+            <p class="hint">Choose at least one.</p>
+            <div class="games">
+              <label class="game">
+                <input type="checkbox" name="entry.1120067337" value="Golden Kick">
+                <span class="glyph" aria-hidden="true">⚽</span>
+                <span class="game-name">Golden Kick</span>
+                <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24">
+                    <path d="M5 12.5l4.5 4.5L19 7" />
+                  </svg></span>
+              </label>
+              <label class="game">
+                <input type="checkbox" name="entry.1120067337" value="Coin Flip">
+                <span class="glyph" aria-hidden="true">🪙</span>
+                <span class="game-name">Coin Flip</span>
+                <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24">
+                    <path d="M5 12.5l4.5 4.5L19 7" />
+                  </svg></span>
+              </label>
+              <label class="game">
+                <input type="checkbox" name="entry.1120067337" value="Minesweeper">
+                <span class="glyph" aria-hidden="true">💣</span>
+                <span class="game-name">Minesweeper</span>
+                <span class="box" aria-hidden="true"><svg viewBox="0 0 24 24">
+                    <path d="M5 12.5l4.5 4.5L19 7" />
+                  </svg></span>
+              </label>
+            </div>
+            <p class="error" id="games-error" hidden>Choose at least one game to continue.</p>
+          </fieldset>
+
+          <button type="submit">
+            <span class="label-text">Send my entry</span>
+          </button>
+
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+
+        <p class="fineprint">Sent straight to the organizer's Google Form.</p>
+
+        <div class="success" id="success" role="status" tabindex="-1" hidden>
+          <div class="stamp" aria-hidden="true">
+            <span class="stamp-label">Entry</span>
+            <span class="stamp-word">Received</span>
+          </div>
+          <h2>You're in.</h2>
+          <p>Thanks, <span id="success-name">Charity</span>. You're signed up for <strong id="success-games">Golden
+              Kick, Coin Flip and Minesweeper</strong>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.querySelector('form');
+    const games = [...form.querySelectorAll('input[name="entry.1120067337"]')];
+    const gamesError = document.getElementById('games-error');
+    const status = document.getElementById('status');
+    const button = form.querySelector('button[type="submit"]');
+    const buttonLabel = button.querySelector('.label-text');
+    const success = document.getElementById('success');
+    let sending = false;
+
+    function checkGames() {
+      const ok = games.some(game => game.checked);
+      gamesError.hidden = ok;
+      return ok;
+    }
+
+    games.forEach(game => game.addEventListener('change', checkGames));
+
+    function listGames(names) {
+      return names.length > 1
+        ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`
+        : names[0];
+    }
+
+    function showSuccess() {
+      const firstName = document.getElementById('name').value.trim().split(/\s+/)[0];
+      const picked = games.filter(game => game.checked).map(game => game.value);
+
+      document.getElementById('success-name').textContent = firstName || 'player';
+      document.getElementById('success-games').textContent = listGames(picked);
+      document.querySelector('.open').textContent = 'Entry received';
+
+      form.hidden = true;
+      document.querySelector('.fineprint').hidden = true;
+      success.hidden = false;
+      success.focus();
+      celebrate();
+    }
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (sending) return;
+
+      if (!form.reportValidity()) {
+        form.querySelector(':invalid')?.focus();
+        return;
+      }
+      if (!checkGames()) {
+        games[0].focus();
+        return;
+      }
+
+      sending = true;
+      button.disabled = true;
+      buttonLabel.textContent = 'Sending…';
+      status.textContent = 'Sending your entry.';
+
+      const body = new URLSearchParams();
+      for (const [key, value] of new FormData(form)) body.append(key, value);
+
+      try {
+        // shortcut: no-cors responses are opaque, so success means the request left the browser.
+        await fetch(form.action, { method: 'POST', mode: 'no-cors', body });
+        showSuccess();
+      } catch {
+        sending = false;
+        button.disabled = false;
+        buttonLabel.textContent = 'Send my entry';
+        status.textContent = "That didn't send. Check your connection and try again.";
+      }
+    });
+
+    function celebrate() {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'fx';
+      canvas.setAttribute('aria-hidden', 'true');
+      document.body.append(canvas);
+
+      const ctx = canvas.getContext('2d');
+      const scale = Math.min(devicePixelRatio || 1, 2);
+      let width, height;
+
+      function resize() {
+        width = innerWidth;
+        height = innerHeight;
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      }
+      resize();
+      addEventListener('resize', resize);
+
+      const colors = ['#e6d5b8', '#e2532b', '#d9a521', '#fff0d6'];
+      const sparks = [];
+      const shots = [
+        [0, .2, .26], [170, .8, .22], [360, .5, .34], [560, .28, .16], [760, .72, .3]
+      ];
+      let fired = 0;
+      const start = performance.now();
+
+      function burst(x, y) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const count = 64 + Math.floor(Math.random() * 26);
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1.2 + Math.random() * 4.4;
+          sparks.push({
+            x, y, px: x, py: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            fade: .008 + Math.random() * .012,
+            color
+          });
+        }
+      }
+
+      function frame(now) {
+        while (fired < shots.length && now - start > shots[fired][0]) {
+          burst(width * shots[fired][1], height * shots[fired][2]);
+          fired++;
+        }
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = sparks.length - 1; i >= 0; i--) {
+          const spark = sparks[i];
+          spark.px = spark.x;
+          spark.py = spark.y;
+          spark.vx *= .984;
+          spark.vy = spark.vy * .984 + .05;
+          spark.x += spark.vx;
+          spark.y += spark.vy;
+          spark.life -= spark.fade;
+          if (spark.life <= 0) {
+            sparks.splice(i, 1);
+            continue;
+          }
+          ctx.globalAlpha = spark.life;
+          ctx.strokeStyle = spark.color;
+          ctx.lineWidth = 1 + spark.life * 1.6;
+          ctx.beginPath();
+          ctx.moveTo(spark.px, spark.py);
+          ctx.lineTo(spark.x, spark.y);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+
+        if (now - start > 4600) {
+          removeEventListener('resize', resize);
+          canvas.remove();
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+  </script>
+</body>
+
+</html>
